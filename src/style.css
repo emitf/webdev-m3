@@ -303,6 +303,17 @@ h1 em {
   align-items: flex-start;
 }
 
+.shelf-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.shelf-action-buttons form {
+  margin: 0;
+}
+
 .rating-form {
   display: flex;
   flex-wrap: wrap;

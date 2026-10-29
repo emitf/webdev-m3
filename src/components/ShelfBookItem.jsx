@@ -24,20 +24,26 @@ export default function ShelfBookItem({
 
       {shelf === 'wantToRead' && (
         <div className="shelf-actions">
-          <form className="rating-form" onSubmit={(event) => {
-            event.preventDefault()
-            onMarkAsRead(book.key, Number(rating))
-            setRating('')
-          }}>
+          <div className="rating-form">
             <span className="rating-label">Your rating</span>
             <StarRating
               bookTitle={book.title}
               value={Number(rating) || 0}
               onChange={(nextRating) => setRating(String(nextRating))}
             />
-            <button type="submit" disabled={!rating}>Mark as read</button>
-          </form>
-          <button type="button" className="text-button" onClick={() => onRemove(book.key)}>Remove</button>
+          </div>
+          <div className="shelf-action-buttons">
+            <form
+              onSubmit={(event) => {
+                event.preventDefault()
+                onMarkAsRead(book.key, Number(rating))
+                setRating('')
+              }}
+            >
+              <button type="submit" disabled={!rating}>Mark as read</button>
+            </form>
+            <button type="button" className="text-button" onClick={() => onRemove(book.key)}>Remove</button>
+          </div>
         </div>
       )}
 
