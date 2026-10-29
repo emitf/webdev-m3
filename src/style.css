@@ -169,6 +169,17 @@ h1 em {
   margin-left: 8px;
 }
 
+.search-row .cancel-search-button {
+  min-width: 110px;
+  border: 1px solid var(--green);
+  background: transparent;
+  color: var(--green);
+}
+
+.search-row .cancel-search-button:hover {
+  background: #e9ede5;
+}
+
 .search-hint {
   margin: 10px 0 0;
   color: var(--muted);
@@ -347,6 +358,19 @@ h2 {
   color: #7c382f;
 }
 
+.search-message.is-invalid {
+  border-left-color: #ad5144;
+  background: #f5e8e4;
+  color: #7c382f;
+}
+
+.search-message.is-cancelled {
+  border-left-color: #aaa89e;
+  background: #efede6;
+  color: #68685f;
+  font-weight: 400;
+}
+
 .search-message.is-success {
   border-left-color: #73846c;
   background: #e9ede5;
@@ -378,6 +402,7 @@ h2 {
 }
 
 .book-cover {
+  position: relative;
   min-height: 210px;
   display: grid;
   place-items: center;
@@ -385,6 +410,18 @@ h2 {
   color: var(--muted);
   font: 11px var(--mono);
   text-align: center;
+}
+
+.book-cover-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  color: var(--muted);
+  font: 11px var(--mono);
+  text-align: center;
+  pointer-events: none;
 }
 
 .book-cover img {
@@ -427,9 +464,14 @@ h2 {
   font-size: 11px;
 }
 
-.save-button:hover {
+.save-button:not(:disabled):hover {
   background: var(--green);
   color: white;
+}
+
+.save-button:disabled {
+  cursor: default;
+  opacity: 0.65;
 }
 
 .search-row button:disabled {

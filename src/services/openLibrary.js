@@ -2,7 +2,7 @@ import { filterValidBooks } from '../data/bookData.js'
 
 const SEARCH_URL = 'https://openlibrary.org/search.json'
 
-export async function fetchBooksFromOpenLibrary(query) {
+export async function fetchBooksFromOpenLibrary(query, signal) {
   const params = new URLSearchParams({
     q: query,
     limit: '12',
@@ -12,8 +12,9 @@ export async function fetchBooksFromOpenLibrary(query) {
   let response
 
   try {
-    response = await fetch(`${SEARCH_URL}?${params}`)
-  } catch {
+    response = await fetch(`${SEARCH_URL}?${params}`, { signal })
+  } catch (error) {
+    if (signal?.aborted || error?.name === 'AbortError') throw error
     throw new Error('Could not reach Open Library. Check your connection and try again.')
   }
 

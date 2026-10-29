@@ -1,56 +1,46 @@
 import { useEffect, useState } from 'react'
+import BookResults from './components/BookResults.jsx'
+import SearchForm from './components/SearchForm.jsx'
+import SectionHeading from './components/SectionHeading.jsx'
+import ShelfPanel from './components/ShelfPanel.jsx'
+import useBookSearch from './hooks/useBookSearch.js'
 import { loadLibraryState, saveLibraryState } from './services/libraryStorage.js'
 
-function SectionHeading({ eyebrow, title, id, aside }) {
-  return (
-    <div className="section-heading">
-      <div>
-        <p className="eyebrow">{eyebrow}</p>
-        <h2 id={id}>{title}</h2>
-      </div>
-      {aside}
-    </div>
-  )
-}
-
-function ShelfPanel({ eyebrow, title, id, books, emptyMessage }) {
-  return (
-    <section className="shelf-panel" aria-labelledby={id}>
-      <div className="shelf-panel-heading">
-        <p className="eyebrow">{eyebrow}</p>
-        <h3 id={id}>{title}</h3>
-        <span className="saved-count">
-          {books.length} {books.length === 1 ? 'book' : 'books'}
-        </span>
-      </div>
-      {books.length === 0 ? (
-        <p className="shelf-empty">{emptyMessage}</p>
-      ) : (
-        <ul className="shelf-book-list">
-          {books.map((book) => (
-            <li key={book.key}>
-              <span className="shelf-book-title">{book.title}</span>
-              <span className="shelf-book-details">
-                {book.author_name?.[0] ?? 'Author unknown'}
-                {book.rating ? ` · ${book.rating}/5` : ''}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  )
-}
-
 export default function App() {
-  const [libraryState] = useState(loadLibraryState)
+  const [libraryState, setLibraryState] = useState(loadLibraryState)
   const [storageError, setStorageError] = useState('')
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    searchState,
+    searchInputRef,
+    handleSearch,
+    cancelSearch,
+  } = useBookSearch()
 
   // localStorage is external to React; show its write error when shelf syncing fails.
   useEffect(() => {
     const wasSaved = saveLibraryState(libraryState)
     setStorageError(wasSaved ? '' : 'Your shelves could not be saved in this browser.')
   }, [libraryState])
+
+  function saveBook(book) {
+    setLibraryState((currentState) => {
+      const savedBookKeys = new Set(
+        [...currentState.wantToRead, ...currentState.read].map((savedBook) => savedBook.key),
+      )
+      if (savedBookKeys.has(book.key)) return currentState
+
+      return {
+        ...currentState,
+        wantToRead: [...currentState.wantToRead, book],
+      }
+    })
+  }
+
+  const savedBookKeys = new Set(
+    [...libraryState.wantToRead, ...libraryState.read].map((book) => book.key),
+  )
 
   return (
     <div id="app">
@@ -72,27 +62,24 @@ export default function App() {
           </p>
         </section>
 
-        <section className="search-section" role="search" aria-label="Search for books">
-          <label htmlFor="book-search">What would you like to read?</label>
-          <div className="search-row">
-            <input
-              id="book-search"
-              name="q"
-              type="search"
-              placeholder="Try a title, author, or subject"
-              autoComplete="off"
-            />
-            <button type="button" disabled>Search <span aria-hidden="true">↗</span></button>
-          </div>
-          <p className="search-hint">For example: “mystery”, “Octavia Butler”, or “gardening”</p>
-        </section>
+        <SearchForm
+          query={searchQuery}
+          onQueryChange={setSearchQuery}
+          onSubmit={handleSearch}
+          onCancel={cancelSearch}
+          inputRef={searchInputRef}
+          isSearching={searchState.status === 'loading'}
+          isInvalid={searchState.status === 'invalid'}
+        />
 
-        <section className="books-section" aria-labelledby="results-title">
-          <SectionHeading eyebrow="THE LIBRARY" title="Books to explore" id="results-title" />
-          <p className="search-message is-idle" role="status" aria-live="polite">
-            Your search results will appear here.
-          </p>
-        </section>
+        <BookResults
+          status={searchState.status}
+          books={searchState.books}
+          query={searchState.query}
+          error={searchState.error}
+          savedBookKeys={savedBookKeys}
+          onSave={saveBook}
+        />
 
         <section className="saved-section" id="shelves" aria-labelledby="shelves-title">
           <SectionHeading eyebrow="YOUR READING LIFE" title="Your shelves" id="shelves-title" />
