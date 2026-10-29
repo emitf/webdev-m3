@@ -255,6 +255,24 @@ h1 em {
   border-top: 1px solid var(--line);
 }
 
+.hidden-book-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.hidden-book-grid > li {
+  min-width: 0;
+  justify-content: flex-start;
+  padding: 15px;
+  border: 1px solid var(--line);
+  background: #fffefa;
+}
+
+.hidden-book-grid .shelf-actions {
+  margin-top: 4px;
+}
+
 .shelf-book-item {
   display: flex;
   align-items: flex-start;
@@ -742,6 +760,22 @@ h2 {
   }
 
   .shelf-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hidden-book-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .hidden-book-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 360px) {
+  .hidden-book-grid {
     grid-template-columns: 1fr;
   }
 }

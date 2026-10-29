@@ -6,6 +6,7 @@ export default function ShelfPanel({
   id,
   books,
   emptyMessage,
+  listClassName = '',
   shelf,
   onMarkAsRead,
   onChangeRating,
@@ -25,7 +26,7 @@ export default function ShelfPanel({
       {books.length === 0 ? (
         <p className="shelf-empty">{emptyMessage}</p>
       ) : (
-        <ul className="shelf-book-list">
+        <ul className={`shelf-book-list ${listClassName}`.trim()}>
           {books.map((book) => (
             <ShelfBookItem
               key={book.key}

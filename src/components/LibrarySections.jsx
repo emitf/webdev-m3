@@ -69,6 +69,7 @@ export default function LibrarySections({
           id="hidden-title"
           books={libraryState.hiddenBooks}
           emptyMessage="Books you hide from discovery can be restored here."
+          listClassName="hidden-book-grid"
           shelf="hidden"
           onRestore={onRestoreBook}
         />
