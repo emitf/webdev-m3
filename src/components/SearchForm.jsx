@@ -8,7 +8,7 @@ export default function SearchForm({
   isInvalid,
 }) {
   return (
-    <form className="search-section" role="search" aria-label="Search for books" onSubmit={onSubmit} noValidate>
+    <form id="search" className="search-section" role="search" aria-label="Search for books" onSubmit={onSubmit} noValidate>
       <label htmlFor="book-search">What would you like to read?</label>
       <div className="search-row">
         <input

@@ -57,6 +57,45 @@ a:focus-visible {
   border-bottom: 1px solid var(--line);
 }
 
+.section-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  isolation: isolate;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-bottom: 1px solid #3d5541;
+  background-color: var(--green);
+  box-shadow: 0 3px 8px rgb(41 40 32 / 12%);
+}
+
+.section-nav a {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  color: var(--paper);
+  font: 700 13px var(--mono);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section-nav a:hover {
+  background: #5b765f;
+}
+
+#search,
+#shelves,
+#recommendations,
+#hidden-books {
+  scroll-margin-top: 100px;
+}
+
 .brand {
   color: var(--green);
   font-family: var(--serif);
@@ -72,14 +111,22 @@ a:focus-visible {
 }
 
 .saved-link {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
   color: var(--green);
-  font-size: 13px;
   text-decoration: none;
 }
 
-.saved-link span {
-  margin-left: 5px;
-  font-size: 18px;
+.saved-link svg {
+  width: 27px;
+  height: 27px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
 }
 
 .intro {
@@ -761,6 +808,19 @@ h2 {
 
   .shelf-grid {
     grid-template-columns: 1fr;
+  }
+
+  .section-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .section-nav a {
+    min-height: 40px;
+    padding: 0 8px;
+    font-size: 12px;
   }
 
   .hidden-book-grid {

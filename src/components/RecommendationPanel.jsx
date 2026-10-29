@@ -41,7 +41,7 @@ export default function RecommendationPanel({
   })
 
   return (
-    <section className="recommendation-section" aria-labelledby="recommendation-title">
+    <section className="recommendation-section" id="recommendations" aria-labelledby="recommendation-title">
       <div className="recommendation-heading">
         <div>
           <p className="eyebrow">BASED ON YOUR READ SHELF</p>

@@ -61,10 +61,19 @@ export default function App() {
         <a className="brand" href="#top" aria-label="Paper Trail home">
           paper trail<span>.</span>
         </a>
-        <a className="saved-link" href="#shelves">
-          Your shelves <span aria-hidden="true">♡</span>
+        <a className="saved-link" href="#shelves" aria-label="Go to your shelves" title="Your shelves">
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M12 6.2c-2.2-1.7-5.1-2.2-8-1.5v13c2.9-.7 5.8-.2 8 1.5m0-13c2.2-1.7 5.1-2.2 8-1.5v13c-2.9-.7-5.8-.2-8 1.5m0-13v13" />
+          </svg>
         </a>
       </header>
+
+      <nav className="section-nav" aria-label="Page sections">
+        <a href="#search">Search</a>
+        <a href="#shelves">Your shelves</a>
+        <a href="#recommendations">Recommendations</a>
+        <a href="#hidden-books">Hidden books</a>
+      </nav>
 
       <main id="top">
         <section className="intro" aria-labelledby="page-title">

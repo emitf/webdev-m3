@@ -62,7 +62,7 @@ export default function LibrarySections({
         />
       </section>
 
-      <section className="hidden-section" aria-labelledby="hidden-title">
+      <section className="hidden-section" id="hidden-books" aria-labelledby="hidden-title">
         <ShelfPanel
           eyebrow="OUT OF YOUR DISCOVERY LIST"
           title="Hidden books"
