@@ -43,7 +43,7 @@ export function storeBooksInCache(query, books) {
   })
 
   const updatedCache = [
-    { query, savedAt: now, books: filterValidBooks(books) },
+    { query, savedAt: now, books },
     ...freshEntries.filter((entry) => entry.query !== query),
   ].slice(0, MAX_CACHE_ENTRIES)
 

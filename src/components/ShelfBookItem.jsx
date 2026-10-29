@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { getBookAuthor } from '../data/bookData.js'
 import StarRating from './StarRating.jsx'
 
 export default function ShelfBookItem({
@@ -11,7 +12,7 @@ export default function ShelfBookItem({
   onRestore,
 }) {
   const [rating, setRating] = useState('')
-  const author = book.author_name?.[0] ?? 'Author unknown'
+  const author = getBookAuthor(book)
 
   return (
     <li className="shelf-book-item">

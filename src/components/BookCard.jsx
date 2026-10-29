@@ -1,10 +1,5 @@
 import { useState } from 'react'
-
-function getAuthor(book) {
-  return Array.isArray(book.author_name) && book.author_name.length > 0
-    ? book.author_name[0]
-    : 'Author unknown'
-}
+import { getBookAuthor } from '../data/bookData.js'
 
 function BookCover({ book }) {
   const [coverStatus, setCoverStatus] = useState(Number.isInteger(book.cover_i) ? 'loading' : 'unavailable')
@@ -33,7 +28,7 @@ export default function BookCard({ book, isSaved, onSave, onHide }) {
       <BookCover book={book} />
       <div className="book-details">
         <h3>{book.title}</h3>
-        <p className="book-author">{getAuthor(book)}</p>
+        <p className="book-author">{getBookAuthor(book)}</p>
         <p className="book-year">
           {Number.isInteger(book.first_publish_year)
             ? `First published ${book.first_publish_year}`

@@ -1,4 +1,3 @@
-import { filterValidBooks } from './bookData.js'
 import { isValidRating } from './libraryState.js'
 
 const GENERAL_SUBJECTS = new Set([
@@ -111,7 +110,7 @@ function summarizeScores(scores, order, getLabel, type) {
 }
 
 export function getWeightedGenre(readBooks) {
-  const ratedBooks = filterValidBooks(readBooks).filter((book) => isValidRating(book.rating))
+  const ratedBooks = readBooks.filter((book) => isValidRating(book.rating))
   const genreContributions = ratedBooks.flatMap((book) =>
     [...getBookGenres(book)].map((genre) => ({ category: genre, rating: book.rating })),
   )
@@ -146,7 +145,5 @@ export function createReadShelfSignature(readBooks) {
 }
 
 export function filterAvailableRecommendations(books, hiddenBookKeys, savedBookKeys) {
-  return filterValidBooks(books).filter(
-    (book) => !hiddenBookKeys.has(book.key) && !savedBookKeys.has(book.key),
-  )
+  return books.filter((book) => !hiddenBookKeys.has(book.key) && !savedBookKeys.has(book.key))
 }

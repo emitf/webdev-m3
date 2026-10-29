@@ -1,4 +1,3 @@
-import { filterValidBooks } from '../data/bookData.js'
 import { createEmptyLibraryState, normalizeLibraryState } from '../data/libraryState.js'
 
 const LIBRARY_STATE_KEY = 'paper-trail-library-v1'
@@ -20,7 +19,7 @@ export function loadLibraryState() {
 
     return normalizeLibraryState({
       ...createEmptyLibraryState(),
-      wantToRead: filterValidBooks(JSON.parse(legacyBooksText)),
+      wantToRead: JSON.parse(legacyBooksText),
     })
   } catch {
     return createEmptyLibraryState()
@@ -29,7 +28,7 @@ export function loadLibraryState() {
 
 export function saveLibraryState(libraryState) {
   try {
-    localStorage.setItem(LIBRARY_STATE_KEY, JSON.stringify(normalizeLibraryState(libraryState)))
+    localStorage.setItem(LIBRARY_STATE_KEY, JSON.stringify(libraryState))
     return true
   } catch {
     return false

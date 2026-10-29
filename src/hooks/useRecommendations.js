@@ -6,7 +6,6 @@ const INITIAL_STATE = {
   status: 'idle',
   books: [],
   genre: '',
-  total: 0,
   error: '',
   sourceSignature: '',
 }
@@ -30,7 +29,6 @@ export default function useRecommendations(readBooks) {
       ...INITIAL_STATE,
       status: 'loading',
       genre: genreSummary.genre,
-      total: genreSummary.total,
       sourceSignature: readShelfSignature,
     })
 
@@ -43,7 +41,6 @@ export default function useRecommendations(readBooks) {
         status: books.length > 0 ? 'success' : 'empty',
         books,
         genre: genreSummary.genre,
-        total: genreSummary.total,
         sourceSignature: readShelfSignature,
       })
     } catch (error) {
@@ -53,7 +50,6 @@ export default function useRecommendations(readBooks) {
         ...INITIAL_STATE,
         status: 'error',
         genre: genreSummary.genre,
-        total: genreSummary.total,
         error: error.message,
         sourceSignature: readShelfSignature,
       })

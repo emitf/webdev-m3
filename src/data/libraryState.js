@@ -23,8 +23,8 @@ export function normalizeLibraryState(value) {
   }
 
   const seenReadKeys = new Set()
-  const read = (Array.isArray(value.read) ? value.read : [])
-    .filter((book) => isValidRating(book?.rating) && filterValidBooks([book]).length === 1)
+  const read = filterValidBooks(value.read)
+    .filter((book) => isValidRating(book.rating))
     .filter((book) => {
       if (seenReadKeys.has(book.key)) return false
       seenReadKeys.add(book.key)
