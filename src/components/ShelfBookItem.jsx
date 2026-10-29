@@ -48,7 +48,7 @@ export default function ShelfBookItem({
       )}
 
       {shelf === 'read' && (
-        <div className="shelf-actions shelf-read-actions">
+        <div className="shelf-actions">
           <div className="rating-form">
             <span className="rating-label">Your rating</span>
             <StarRating
@@ -57,8 +57,10 @@ export default function ShelfBookItem({
               onChange={(rating) => onChangeRating(book.key, rating)}
             />
           </div>
-          <button type="button" onClick={() => onMoveBack(book.key)}>Move to Want to read</button>
-          <button type="button" className="text-button" onClick={() => onRemove(book.key)}>Remove</button>
+          <div className="shelf-action-buttons">
+            <button type="button" onClick={() => onMoveBack(book.key)}>Move to Want to read</button>
+            <button type="button" className="text-button" onClick={() => onRemove(book.key)}>Remove</button>
+          </div>
         </div>
       )}
 

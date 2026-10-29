@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import BookResults from './components/BookResults.jsx'
+import LibrarySections from './components/LibrarySections.jsx'
 import SearchForm from './components/SearchForm.jsx'
-import SectionHeading from './components/SectionHeading.jsx'
-import ShelfPanel from './components/ShelfPanel.jsx'
 import useBookSearch from './hooks/useBookSearch.js'
+import useRecommendations from './hooks/useRecommendations.js'
 import { loadLibraryState, saveLibraryState } from './services/libraryStorage.js'
 import {
   addBookToWantToRead,
@@ -14,6 +14,7 @@ import {
   removeBookFromShelf,
   restoreBook,
 } from './data/libraryState.js'
+import { filterAvailableRecommendations, getWeightedGenre } from './data/recommendations.js'
 
 export default function App() {
   const [libraryState, setLibraryState] = useState(loadLibraryState)
@@ -26,6 +27,12 @@ export default function App() {
     handleSearch,
     cancelSearch,
   } = useBookSearch()
+  const genreSummary = getWeightedGenre(libraryState.read)
+  const {
+    recommendationState,
+    findRecommendations,
+    readShelfSignature,
+  } = useRecommendations(libraryState.read)
 
   // localStorage is external to React; show its write error when shelf syncing fails.
   useEffect(() => {
@@ -38,6 +45,11 @@ export default function App() {
   )
   const hiddenBookKeys = new Set(libraryState.hiddenBooks.map((book) => book.key))
   const visibleSearchBooks = searchState.books.filter((book) => !hiddenBookKeys.has(book.key))
+  const visibleRecommendationBooks = filterAvailableRecommendations(
+    recommendationState.books,
+    hiddenBookKeys,
+    savedBookKeys,
+  )
 
   function updateLibrary(update) {
     setLibraryState((currentState) => update(currentState))
@@ -83,61 +95,23 @@ export default function App() {
           onHide={(book) => updateLibrary((state) => hideBook(state, book))}
         />
 
-        <section className="saved-section" id="shelves" aria-labelledby="shelves-title">
-          <SectionHeading eyebrow="YOUR READING LIFE" title="Your shelves" id="shelves-title" />
-          {storageError && <p className="storage-error" role="status">{storageError}</p>}
-
-          <div className="shelf-grid">
-            <ShelfPanel
-              eyebrow="FOR ANOTHER DAY"
-              title="Want to read"
-              id="want-to-read-title"
-              books={libraryState.wantToRead}
-              emptyMessage="Books you save for later will be collected here."
-              shelf="wantToRead"
-              onMarkAsRead={(key, rating) => updateLibrary((state) => markBookAsRead(state, key, rating))}
-              onRemove={(key) => updateLibrary((state) => removeBookFromShelf(state, key))}
-            />
-            <ShelfPanel
-              eyebrow="STORIES YOU'VE FINISHED"
-              title="Read"
-              id="read-title"
-              books={libraryState.read}
-              emptyMessage="Books you mark as read, along with your ratings, will appear here."
-              shelf="read"
-              onChangeRating={(key, rating) => updateLibrary((state) => changeBookRating(state, key, rating))}
-              onMoveBack={(key) => updateLibrary((state) => moveBookToWantToRead(state, key))}
-              onRemove={(key) => updateLibrary((state) => removeBookFromShelf(state, key))}
-            />
-          </div>
-
-          <section className="recommendation-section" aria-labelledby="recommendation-title">
-            <div className="recommendation-heading">
-              <div>
-                <p className="eyebrow">BASED ON YOUR READ SHELF</p>
-                <h2 id="recommendation-title">You might also like</h2>
-              </div>
-              <button className="recommend-button" type="button" disabled>
-                Find recommendations
-              </button>
-            </div>
-            <p className="recommendation-message">
-              Mark a book as read to get recommendations based on its genre.
-            </p>
-          </section>
-        </section>
-
-        <section className="hidden-section" aria-labelledby="hidden-title">
-          <ShelfPanel
-            eyebrow="OUT OF YOUR DISCOVERY LIST"
-            title="Hidden books"
-            id="hidden-title"
-            books={libraryState.hiddenBooks}
-            emptyMessage="Books you hide from discovery can be restored here."
-            shelf="hidden"
-            onRestore={(key) => updateLibrary((state) => restoreBook(state, key))}
-          />
-        </section>
+        <LibrarySections
+          libraryState={libraryState}
+          storageError={storageError}
+          genreSummary={genreSummary}
+          recommendationState={recommendationState}
+          readShelfSignature={readShelfSignature}
+          visibleRecommendationBooks={visibleRecommendationBooks}
+          savedBookKeys={savedBookKeys}
+          onFindRecommendations={() => findRecommendations(genreSummary)}
+          onSaveBook={(book) => updateLibrary((state) => addBookToWantToRead(state, book))}
+          onHideBook={(book) => updateLibrary((state) => hideBook(state, book))}
+          onMarkAsRead={(key, rating) => updateLibrary((state) => markBookAsRead(state, key, rating))}
+          onChangeRating={(key, rating) => updateLibrary((state) => changeBookRating(state, key, rating))}
+          onMoveBack={(key) => updateLibrary((state) => moveBookToWantToRead(state, key))}
+          onRemoveBook={(key) => updateLibrary((state) => removeBookFromShelf(state, key))}
+          onRestoreBook={(key) => updateLibrary((state) => restoreBook(state, key))}
+        />
       </main>
 
       <footer className="site-footer">
