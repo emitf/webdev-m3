@@ -21,6 +21,7 @@ export default function BookResults({
   error,
   savedBookKeys,
   onSave,
+  onHide,
 }) {
   const isError = status === 'error' || status === 'invalid'
 
@@ -43,6 +44,7 @@ export default function BookResults({
               book={book}
               isSaved={savedBookKeys.has(book.key)}
               onSave={onSave}
+              onHide={onHide}
             />
           ))}
         </div>

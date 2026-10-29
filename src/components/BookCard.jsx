@@ -27,7 +27,7 @@ function BookCover({ book }) {
   )
 }
 
-export default function BookCard({ book, isSaved, onSave }) {
+export default function BookCard({ book, isSaved, onSave, onHide }) {
   return (
     <article className="book-card">
       <BookCover book={book} />
@@ -39,14 +39,19 @@ export default function BookCard({ book, isSaved, onSave }) {
             ? `First published ${book.first_publish_year}`
             : 'Publication year unknown'}
         </p>
-        <button
-          className="save-button"
-          type="button"
-          onClick={() => onSave(book)}
-          disabled={isSaved}
-        >
-          {isSaved ? 'On your shelf' : 'Save for later'}
-        </button>
+        <div className="book-actions">
+          <button
+            className="save-button"
+            type="button"
+            onClick={() => onSave(book)}
+            disabled={isSaved}
+          >
+            {isSaved ? 'On your shelf' : 'Save for later'}
+          </button>
+          <button className="text-button hide-button" type="button" onClick={() => onHide(book)}>
+            Hide from results
+          </button>
+        </div>
       </div>
     </article>
   )

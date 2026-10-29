@@ -5,6 +5,15 @@ import SectionHeading from './components/SectionHeading.jsx'
 import ShelfPanel from './components/ShelfPanel.jsx'
 import useBookSearch from './hooks/useBookSearch.js'
 import { loadLibraryState, saveLibraryState } from './services/libraryStorage.js'
+import {
+  addBookToWantToRead,
+  changeBookRating,
+  hideBook,
+  markBookAsRead,
+  moveBookToWantToRead,
+  removeBookFromShelf,
+  restoreBook,
+} from './data/libraryState.js'
 
 export default function App() {
   const [libraryState, setLibraryState] = useState(loadLibraryState)
@@ -24,23 +33,15 @@ export default function App() {
     setStorageError(wasSaved ? '' : 'Your shelves could not be saved in this browser.')
   }, [libraryState])
 
-  function saveBook(book) {
-    setLibraryState((currentState) => {
-      const savedBookKeys = new Set(
-        [...currentState.wantToRead, ...currentState.read].map((savedBook) => savedBook.key),
-      )
-      if (savedBookKeys.has(book.key)) return currentState
-
-      return {
-        ...currentState,
-        wantToRead: [...currentState.wantToRead, book],
-      }
-    })
-  }
-
   const savedBookKeys = new Set(
     [...libraryState.wantToRead, ...libraryState.read].map((book) => book.key),
   )
+  const hiddenBookKeys = new Set(libraryState.hiddenBooks.map((book) => book.key))
+  const visibleSearchBooks = searchState.books.filter((book) => !hiddenBookKeys.has(book.key))
+
+  function updateLibrary(update) {
+    setLibraryState((currentState) => update(currentState))
+  }
 
   return (
     <div id="app">
@@ -74,11 +75,12 @@ export default function App() {
 
         <BookResults
           status={searchState.status}
-          books={searchState.books}
+          books={visibleSearchBooks}
           query={searchState.query}
           error={searchState.error}
           savedBookKeys={savedBookKeys}
-          onSave={saveBook}
+          onSave={(book) => updateLibrary((state) => addBookToWantToRead(state, book))}
+          onHide={(book) => updateLibrary((state) => hideBook(state, book))}
         />
 
         <section className="saved-section" id="shelves" aria-labelledby="shelves-title">
@@ -92,6 +94,9 @@ export default function App() {
               id="want-to-read-title"
               books={libraryState.wantToRead}
               emptyMessage="Books you save for later will be collected here."
+              shelf="wantToRead"
+              onMarkAsRead={(key, rating) => updateLibrary((state) => markBookAsRead(state, key, rating))}
+              onRemove={(key) => updateLibrary((state) => removeBookFromShelf(state, key))}
             />
             <ShelfPanel
               eyebrow="STORIES YOU'VE FINISHED"
@@ -99,6 +104,10 @@ export default function App() {
               id="read-title"
               books={libraryState.read}
               emptyMessage="Books you mark as read, along with your ratings, will appear here."
+              shelf="read"
+              onChangeRating={(key, rating) => updateLibrary((state) => changeBookRating(state, key, rating))}
+              onMoveBack={(key) => updateLibrary((state) => moveBookToWantToRead(state, key))}
+              onRemove={(key) => updateLibrary((state) => removeBookFromShelf(state, key))}
             />
           </div>
 
@@ -119,8 +128,15 @@ export default function App() {
         </section>
 
         <section className="hidden-section" aria-labelledby="hidden-title">
-          <SectionHeading eyebrow="OUT OF YOUR DISCOVERY LIST" title="Hidden books" id="hidden-title" />
-          <p className="saved-empty">Books you hide from search and recommendations can be restored here.</p>
+          <ShelfPanel
+            eyebrow="OUT OF YOUR DISCOVERY LIST"
+            title="Hidden books"
+            id="hidden-title"
+            books={libraryState.hiddenBooks}
+            emptyMessage="Books you hide from discovery can be restored here."
+            shelf="hidden"
+            onRestore={(key) => updateLibrary((state) => restoreBook(state, key))}
+          />
         </section>
       </main>
 
