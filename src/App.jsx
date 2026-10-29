@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import BookResults from './components/BookResults.jsx'
 import LibrarySections from './components/LibrarySections.jsx'
 import SearchForm from './components/SearchForm.jsx'
@@ -34,12 +34,6 @@ export default function App() {
     readShelfSignature,
   } = useRecommendations(libraryState.read)
 
-  // localStorage is external to React; show its write error when shelf syncing fails.
-  useEffect(() => {
-    const wasSaved = saveLibraryState(libraryState)
-    setStorageError(wasSaved ? '' : 'Your shelves could not be saved in this browser.')
-  }, [libraryState])
-
   const savedBookKeys = new Set(
     [...libraryState.wantToRead, ...libraryState.read].map((book) => book.key),
   )
@@ -52,7 +46,11 @@ export default function App() {
   )
 
   function updateLibrary(update) {
-    setLibraryState((currentState) => update(currentState))
+    // Save with the user action that changes the shelves so failures can be reported without effect-driven state.
+    const nextState = update(libraryState)
+    const wasSaved = saveLibraryState(nextState)
+    setLibraryState(nextState)
+    setStorageError(wasSaved ? '' : 'Your shelves could not be saved in this browser.')
   }
 
   return (
