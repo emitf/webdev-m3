@@ -3,15 +3,19 @@ import BookCard from './BookCard.jsx'
 function getMessage({ readCount, status, genreSummary, genre, error, bookCount, isOutOfDate }) {
   if (isOutOfDate) return 'Your Read shelf changed. Find recommendations again to refresh them.'
   if (!genreSummary && !readCount) return 'Mark books as read and rate them to get recommendations.'
-  if (!genreSummary) return 'Your Read books have no recognized genres yet. Try books with genre subjects.'
+  if (!genreSummary) return 'Your Read books do not have usable subjects for recommendations yet.'
   if (status === 'loading') return `Finding books about “${genre}”…`
   if (status === 'error') return error
   if (status === 'empty') return `No books were found for “${genre}”. Try again later.`
   if (status === 'success' && bookCount === 0) {
     return `No new books are available for “${genre}”; the matches are already on your shelves or hidden.`
   }
-  if (status === 'success') return `Suggestions based on “${genre}”, your highest weighted genre.`
-  return `Your strongest match is ${genreSummary.genre} with a weighted score of ${genreSummary.total}.`
+  if (status === 'success') {
+    const basis = genreSummary.type === 'subject' ? 'strongest weighted subject' : 'highest weighted genre'
+    return `Suggestions based on “${genre}”, your ${basis}.`
+  }
+  const basis = genreSummary.type === 'subject' ? 'fallback subject' : 'genre'
+  return `Your strongest ${basis} is ${genreSummary.genre} with a weighted score of ${genreSummary.total}.`
 }
 
 export default function RecommendationPanel({
@@ -39,7 +43,6 @@ export default function RecommendationPanel({
     bookCount: books.length,
     isOutOfDate,
   })
-
   return (
     <section className="recommendation-section" id="recommendations" aria-labelledby="recommendation-title">
       <div className="recommendation-heading">
