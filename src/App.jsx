@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react'
+import { loadLibraryState, saveLibraryState } from './services/libraryStorage.js'
+
 function SectionHeading({ eyebrow, title, id, aside }) {
   return (
     <div className="section-heading">
@@ -10,19 +13,45 @@ function SectionHeading({ eyebrow, title, id, aside }) {
   )
 }
 
-function ShelfPanel({ eyebrow, title, id, message }) {
+function ShelfPanel({ eyebrow, title, id, books, emptyMessage }) {
   return (
     <section className="shelf-panel" aria-labelledby={id}>
       <div className="shelf-panel-heading">
         <p className="eyebrow">{eyebrow}</p>
         <h3 id={id}>{title}</h3>
+        <span className="saved-count">
+          {books.length} {books.length === 1 ? 'book' : 'books'}
+        </span>
       </div>
-      <p className="shelf-empty">{message}</p>
+      {books.length === 0 ? (
+        <p className="shelf-empty">{emptyMessage}</p>
+      ) : (
+        <ul className="shelf-book-list">
+          {books.map((book) => (
+            <li key={book.key}>
+              <span className="shelf-book-title">{book.title}</span>
+              <span className="shelf-book-details">
+                {book.author_name?.[0] ?? 'Author unknown'}
+                {book.rating ? ` · ${book.rating}/5` : ''}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   )
 }
 
 export default function App() {
+  const [libraryState] = useState(loadLibraryState)
+  const [storageError, setStorageError] = useState('')
+
+  // localStorage is external to React; show its write error when shelf syncing fails.
+  useEffect(() => {
+    const wasSaved = saveLibraryState(libraryState)
+    setStorageError(wasSaved ? '' : 'Your shelves could not be saved in this browser.')
+  }, [libraryState])
+
   return (
     <div id="app">
       <header className="site-header">
@@ -67,19 +96,22 @@ export default function App() {
 
         <section className="saved-section" id="shelves" aria-labelledby="shelves-title">
           <SectionHeading eyebrow="YOUR READING LIFE" title="Your shelves" id="shelves-title" />
+          {storageError && <p className="storage-error" role="status">{storageError}</p>}
 
           <div className="shelf-grid">
             <ShelfPanel
               eyebrow="FOR ANOTHER DAY"
               title="Want to read"
               id="want-to-read-title"
-              message="Books you save for later will be collected here."
+              books={libraryState.wantToRead}
+              emptyMessage="Books you save for later will be collected here."
             />
             <ShelfPanel
               eyebrow="STORIES YOU'VE FINISHED"
               title="Read"
               id="read-title"
-              message="Books you mark as read, along with your ratings, will appear here."
+              books={libraryState.read}
+              emptyMessage="Books you mark as read, along with your ratings, will appear here."
             />
           </div>
 

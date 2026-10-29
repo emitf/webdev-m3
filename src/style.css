@@ -201,6 +201,11 @@ h1 em {
   margin-bottom: 16px;
 }
 
+.shelf-panel-heading .saved-count {
+  display: block;
+  margin: 8px 0 0;
+}
+
 .shelf-panel-heading .eyebrow {
   margin-bottom: 6px;
   font-size: 10px;
@@ -223,6 +228,41 @@ h1 em {
   font-size: 13px;
   line-height: 1.5;
   text-align: center;
+}
+
+.shelf-book-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shelf-book-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.shelf-book-title {
+  color: var(--ink);
+  font: 600 15px/1.35 var(--serif);
+}
+
+.shelf-book-details {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.storage-error {
+  margin: 0 0 18px;
+  padding: 12px 15px;
+  border-left: 4px solid #ad5144;
+  background: #f5e8e4;
+  color: #7c382f;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .hidden-section {
