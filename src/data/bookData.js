@@ -25,8 +25,6 @@ export function filterValidBooks(books) {
 }
 
 export function getBookAuthor(book) {
-  if (!Array.isArray(book.author_name)) return 'Author unknown'
-
-  const author = book.author_name.find((item) => typeof item === 'string' && item.trim() !== '')
+  const author = book.author_name[0]
   return author?.trim() ?? 'Author unknown'
 }
